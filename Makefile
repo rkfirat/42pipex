@@ -1,44 +1,38 @@
-NAME            =   pipex
-BONUS_NAME      =   pipex_bonus
+NAME := pipex
+CC := cc
+CFLAGS := -Wall -Wextra -Werror
 
-CC              =   cc
-CFLAGS          =   -Wall -Wextra -Werror -g -I libs/libft/
-RM              =   rm -f
+SRCS := pipex.c pipex_utils.c
+OBJS := $(SRCS:.c=.o)
 
-LIBFT_PATH      =   ./libs/libft/
-LIBFT           =   $(LIBFT_PATH)libft.a
+BONUS_SRCS := pipex_bonus.c exec_bonus.c heredoc_bonus.c utils.c
+BONUS_OBJS := $(BONUS_SRCS:.c=.o)
 
-SRCS            =   src/pipex.c \
-                    src/utils.c \
-                    src/error.c
-
-BONUS_SRCS      =   src/pipex_bonus.c \
-                    src/utils_bonus.c \
-                    src/error_bonus.c
-
-OBJS            =   $(SRCS:.c=.o)
-BONUS_OBJS      =   $(BONUS_SRCS:.c=.o)
+LIBFT_DIR := ./libft
+LIBFT := $(LIBFT_DIR)/libft.a
 
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT)
-	@$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LIBFT)
-	
+	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME)
+
 bonus: $(BONUS_OBJS) $(LIBFT)
-	@$(CC) $(CFLAGS) $(BONUS_OBJS) -o $(BONUS_NAME) $(LIBFT)
-	
+	$(CC) $(CFLAGS) $(BONUS_OBJS) $(LIBFT) -o $(NAME)
+
+%.o: %.c pipex.h
+	$(CC) $(CFLAGS) -I$(LIBFT_DIR) -c $< -o $@
+
 $(LIBFT):
-	@make -s -C $(LIBFT_PATH)
-	@make -s -C $(LIBFT_PATH) clean
-.c.o:
-	@$(CC) $(CFLAGS) -c $< -o $@
+	$(MAKE) -C $(LIBFT_DIR)
 
 clean:
-	@$(RM) $(OBJS) $(BONUS_OBJS)
-	
+	rm -f $(OBJS) $(BONUS_OBJS)
+	$(MAKE) -C $(LIBFT_DIR) clean
+
 fclean: clean
-	@$(RM) $(NAME) $(BONUS_NAME)
-	
+	rm -f $(NAME)
+	$(MAKE) -C $(LIBFT_DIR) fclean
+
 re: fclean all
 
 .PHONY: all clean fclean re bonus

@@ -1,29 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strmapi.c                                       :+:      :+:    :+:   */
+/*   ft_strdup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rfirat <rfirat@student.42.fr>              +#+  +:+       +#+        */
+/*   By: rfirat <rfirat@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/15 20:42:31 by rfirat            #+#    #+#             */
-/*   Updated: 2024/10/20 16:20:30 by rfirat           ###   ########.fr       */
+/*   Created: 2025/11/19 01:32:35 by rfirat            #+#    #+#             */
+/*   Updated: 2025/11/19 02:22:11 by rfirat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "pipex.h"
 
-char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
+char	*ft_strdup(const char *s1)
 {
-	size_t	i;
 	char	*out;
+	size_t	len;
+	size_t	i;
 
 	i = 0;
-	out = (char *) malloc(sizeof(char) * (ft_strlen(s) + 1));
+	len = ft_strlen(s1);
+	out = malloc(len + 1);
 	if (!out)
 		return (NULL);
-	while (s[i])
+	while (i < len)
 	{
-		out[i] = (*f)(i, s[i]);
+		out[i] = s1[i];
 		i++;
 	}
 	out[i] = '\0';

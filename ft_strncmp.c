@@ -1,32 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memchr.c                                        :+:      :+:    :+:   */
+/*   ft_strncmp.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rfirat <rfirat@student.42.fr>              +#+  +:+       +#+        */
+/*   By: rfirat <rfirat@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/09 19:19:58 by rfirat            #+#    #+#             */
-/*   Updated: 2024/10/16 21:06:33 by rfirat           ###   ########.fr       */
+/*   Created: 2025/11/19 01:29:49 by rfirat            #+#    #+#             */
+/*   Updated: 2025/11/19 02:21:42 by rfirat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "pipex.h"
 
-void	*ft_memchr(const void *ptr, int c, size_t n)
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
-	unsigned char	*p;
-	unsigned char	ch;
-	size_t			len;
+	size_t	len;
 
 	len = 0;
-	p = (unsigned char *)ptr;
-	ch = (unsigned char)c;
-	while (len < n)
-	{
-		if (*p == ch)
-			return (p);
-		p++;
+	if (n == 0)
+		return (0);
+	while (s1[len] && s1[len] == s2[len] && len < n)
 		len++;
-	}
-	return (NULL);
+	if (len == n)
+		return (0);
+	return ((unsigned char)s1[len] - (unsigned char)s2[len]);
 }

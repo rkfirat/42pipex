@@ -3,19 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rfirat <rfirat@student.42.fr>              +#+  +:+       +#+        */
+/*   By: rfirat <rfirat@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/14 16:06:06 by rfirat            #+#    #+#             */
-/*   Updated: 2024/10/16 20:46:14 by rfirat           ###   ########.fr       */
+/*   Created: 2025/11/19 01:26:12 by rfirat            #+#    #+#             */
+/*   Updated: 2025/11/19 02:22:04 by rfirat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "pipex.h"
 
-static char	**free_array(char **ptr, int i)
+char	**free_array(char **ptr)
 {
-	while (i > 0)
-		free(ptr[--i]);
+	int	i;
+
+	i = 0;
+	while (ptr[i])
+		free(ptr[i++]);
 	free(ptr);
 	return (NULL);
 }
@@ -83,7 +86,7 @@ static char	**fill_words(const char *s, char c, char **s2, int num_words)
 		}
 		s2[word] = ft_putword(s, start, word_len);
 		if (!s2[word])
-			return (free_array(s2, word));
+			return (free_array(s2));
 		word++;
 	}
 	return (s2);

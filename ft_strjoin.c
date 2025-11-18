@@ -1,37 +1,49 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_substr.c                                        :+:      :+:    :+:   */
+/*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rfirat <rfirat@student.42.fr>              +#+  +:+       +#+        */
+/*   By: rfirat <rfirat@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/11 10:31:42 by rfirat            #+#    #+#             */
-/*   Updated: 2024/10/16 20:37:22 by rfirat           ###   ########.fr       */
+/*   Created: 2025/11/19 01:41:38 by rfirat            #+#    #+#             */
+/*   Updated: 2025/11/19 02:21:40 by rfirat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "pipex.h"
 
-char	*ft_substr(const char *str, unsigned int start, size_t len)
+size_t	ft_strlen(const char	*str)
+{
+	size_t	i;
+
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
+}
+
+char	*ft_strjoin(char const *s1, char const *s2)
 {
 	char	*out;
-	size_t	out_len;
 	size_t	index;
+	size_t	temp;
 
-	if (!str)
+	if (!s1)
 		return (NULL);
-	if (start >= ft_strlen(str) || len == 0)
-		return (ft_strdup(""));
+	out = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
 	index = 0;
-	out_len = ft_strlen(str + start);
-	if (out_len > len)
-		out_len = len;
-	out = malloc(sizeof(char) * (out_len + 1));
+	temp = 0;
 	if (!out)
 		return (NULL);
-	while (index < out_len)
+	while (s1[index])
 	{
-		out[index] = str[start + index];
+		out[index] = s1[index];
+		index++;
+	}
+	while (s2[temp])
+	{
+		out[index] = s2[temp];
+		temp++;
 		index++;
 	}
 	out[index] = '\0';
