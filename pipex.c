@@ -6,7 +6,7 @@
 /*   By: rfirat <rfirat@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 00:42:02 by rfirat            #+#    #+#             */
-/*   Updated: 2025/11/19 10:14:46 by rfirat           ###   ########.fr       */
+/*   Updated: 2025/11/19 13:21:58 by rfirat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,9 @@ void	prep_child(char *cmd, t_pipex pipex, int infile_fd, int outfile_fd)
 	char	*path;
 
 	if (dup2(infile_fd, STDIN_FILENO) == -1)
-		pipex_error("dup2");
+		pipex_error("dup2", 1);
 	if (dup2(outfile_fd, STDOUT_FILENO) == -1)
-		pipex_error("dup2");
+		pipex_error("dup2", 1);
 	if (pipex.infile != -1)
 		close(pipex.infile);
 	if (pipex.outfile != -1)
@@ -73,7 +73,7 @@ void	prep_child(char *cmd, t_pipex pipex, int infile_fd, int outfile_fd)
 	if (!argv || !argv[0])
 	{
 		free_array(argv);
-		pipex_error("Invalid Command");
+		pipex_error("Invalid Path\n", 2);
 	}
 	path = find_cmd_path(argv[0], pipex.envp);
 	if (!path)
@@ -90,24 +90,25 @@ void	pipex_run(t_pipex pipex)
 	t_exec	exec;
 
 	if (pipe(exec.fd) == -1)
-		pipex_error("pipe");
+		pipex_error("pipe", 1);
 	exec.pid1 = fork();
 	if (exec.pid1 == -1)
-		pipex_error("fork");
+		pipex_error("fork", 1);
 	if (exec.pid1 == 0)
 	{
 		close(exec.fd[0]);
 		prep_child(pipex.argv[2], pipex, pipex.infile, exec.fd[1]);
 	}
+	waitpid(exec.pid1, NULL, 0);
 	exec.pid2 = fork();
 	if (exec.pid2 == 0)
 	{
 		close(exec.fd[1]);
-		prep_child(pipex.argv[2], pipex, exec.fd[0], pipex.outfile);
+		prep_child(pipex.argv[3], pipex, exec.fd[0], pipex.outfile);
 	}
 	close(exec.fd[0]);
 	close(exec.fd[1]);
-	waitpid(-1, NULL, 0);
+	waitpid(exec.pid2, NULL, 0);
 }
 
 int	main(int argc, char *argv[], char **envp)
@@ -117,19 +118,12 @@ int	main(int argc, char *argv[], char **envp)
 	if (!envp || argc != 5)
 		return (1);
 	pipex = (t_pipex){.argc = argc, .argv = argv, .envp = envp, -1, -1};
-	pipex.infile = open(argv[1], O_RDONLY);
+	pipex.infile = open(argv[1], O_RDONLY, 0644);
 	if (pipex.infile == -1)
-	{
 		write(2, "The infile could not open\n", 26);
-		return (1);
-	}
-	pipex.outfile = open(argv[4], O_WRONLY | O_TRUNC | O_CREAT);
+	pipex.outfile = open(argv[4], O_WRONLY | O_TRUNC | O_CREAT, 0644);
 	if (pipex.outfile == -1)
-	{
 		write(2, "The outfile could not open\n", 27);
-		close(pipex.infile);
-		return (1);
-	}
 	pipex_run(pipex);
 	if (pipex.infile != -1)
 		close(pipex.infile);

@@ -6,7 +6,7 @@
 /*   By: rfirat <rfirat@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 02:09:24 by rfirat            #+#    #+#             */
-/*   Updated: 2025/11/19 02:21:46 by rfirat           ###   ########.fr       */
+/*   Updated: 2025/11/19 13:21:01 by rfirat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,19 +41,19 @@ char	*cmd_merge(char *path, char *cmd)
 	return (merged);
 }
 
-void	pipex_error(char *str)
+void	pipex_error(char *str, int i)
 {
-	if (str)
+	if (i == 1)
 		perror(str);
 	else
-		perror("pipex");
+		write(2, str, ft_strlen(str));
 	exit(1);
 }
 
 void	exec_child(char **argv, char *path, char **envp)
 {
 	execve(path, argv, envp);
-	pipex_error(path);
+	pipex_error(path, 1);
 	free(path);
 	free_array(argv);
 	exit(EXIT_FAILURE);
