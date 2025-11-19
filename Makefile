@@ -2,7 +2,7 @@ NAME := pipex
 CC := cc
 CFLAGS := -Wall -Wextra -Werror
 
-SRCS := ft_split.c      ft_strdup.c     ft_strncmp.c    pipex_utils.c ft_strchr.c     ft_strjoin.c    pipex.c
+SRCS := ft_split.c pipex_utils.c pipex.c ft_strdup.c ft_strncmp.c ft_strchr.c ft_strjoin.c
 OBJS := $(SRCS:.c=.o)
 
 BONUS_SRCS := pipex_bonus.c exec_bonus.c heredoc_bonus.c utils.c
