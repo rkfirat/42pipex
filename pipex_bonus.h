@@ -6,7 +6,7 @@
 /*   By: rfirat <rfirat@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 09:34:08 by rfirat            #+#    #+#             */
-/*   Updated: 2025/11/19 09:47:34 by rfirat           ###   ########.fr       */
+/*   Updated: 2025/11/19 16:02:34 by rfirat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <sys/wait.h>
 # include "get_next_line.h"
 
 typedef struct s_pipex
@@ -28,14 +29,16 @@ typedef struct s_pipex
 	int		outfile;
 	int		heredoc;
 	int		first_cmd_index;
+	int		status;
 }			t_pipex;
 
 typedef struct s_exec
 {
+	int		infile;
 	int		fd[2];
-	pid_t	pid1;
-	pid_t	pid2;
+	pid_t	pid;
 	int		status;
+	int		i;
 }			t_exec;
 
 typedef struct s_path
@@ -55,6 +58,9 @@ size_t		ft_strlen(const char *str);
 char		*ft_strjoin(char const *s1, char const *s2);
 char		*get_path(char **envp);
 char		*cmd_merge(char *path, char *cmd);
-void		pipex_error(char *str);
+void		pipex_error(char *str, int i);
 void		exec_child(char **argv, char *path, char **envp);
+void		setup_heredoc(t_pipex *pipex);
+void		pipex_run(t_pipex pipex);
+
 #endif

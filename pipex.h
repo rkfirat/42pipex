@@ -6,7 +6,7 @@
 /*   By: rfirat <rfirat@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/19 00:45:36 by rfirat            #+#    #+#             */
-/*   Updated: 2025/11/19 13:20:45 by rfirat           ###   ########.fr       */
+/*   Updated: 2025/11/19 15:54:11 by rfirat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ typedef struct s_pipex
 	char	**envp;
 	int		infile;
 	int		outfile;
+	int		status;
 }			t_pipex;
 
 typedef struct s_exec
@@ -55,4 +56,5 @@ char		*get_path(char **envp);
 char		*cmd_merge(char *path, char *cmd);
 void		pipex_error(char *str, int i);
 void		exec_child(char **argv, char *path, char **envp);
+
 #endif

@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
+/*   pipex_setup_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rfirat <rfirat@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/19 00:42:02 by rfirat            #+#    #+#             */
-/*   Updated: 2025/11/19 15:58:09 by rfirat           ###   ########.fr       */
+/*   Created: 2025/11/19 13:34:21 by rfirat            #+#    #+#             */
+/*   Updated: 2025/11/19 16:03:32 by rfirat           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 char	*find_path_loop(t_path path, char *cmd)
 {
@@ -85,49 +85,70 @@ void	prep_child(char *cmd, t_pipex pipex, int infile_fd, int outfile_fd)
 	exec_child(argv, path, pipex.envp);
 }
 
-void	pipex_run(t_pipex *pipex)
+void	pipex_prep_child(t_pipex pipex, t_exec *exec)
+{
+	exec->pid = fork();
+	if (exec->pid == -1)
+		pipex_error("fork", 1);
+	if (exec->pid == 0)
+	{
+		if (exec->i != pipex.argc - 2)
+		{
+			close(exec->fd[0]);
+			prep_child(pipex.argv[exec->i], pipex, exec->infile, exec->fd[1]);
+		}
+		else
+			prep_child(pipex.argv[exec->i], pipex, exec->infile, pipex.outfile);
+	}
+}
+
+void	pipex_run(t_pipex pipex)
 {
 	t_exec	exec;
 
-	if (pipe(exec.fd) == -1)
-		pipex_error("pipe", 1);
-	exec.pid1 = fork();
-	if (exec.pid1 == -1)
-		pipex_error("fork", 1);
-	if (exec.pid1 == 0)
+	exec.infile = pipex.infile;
+	exec.i = pipex.first_cmd_index;
+	while (exec.i <= pipex.argc - 2)
 	{
-		close(exec.fd[0]);
-		prep_child(pipex->argv[2], *pipex, pipex->infile, exec.fd[1]);
-	}
-	waitpid(exec.pid1, &pipex->status, 0);
-	exec.pid2 = fork();
-	if (exec.pid2 == 0)
-	{
+		if (pipe(exec.fd) == -1)
+			pipex_error("pipe", 1);
+		pipex_prep_child(pipex, &exec);
 		close(exec.fd[1]);
-		prep_child(pipex->argv[3], *pipex, exec.fd[0], pipex->outfile);
+		if (exec.infile != pipex.infile && exec.infile != -1)
+			close(exec.infile);
+		exec.infile = exec.fd[0];
+		exec.i++;
 	}
-	close(exec.fd[0]);
-	close(exec.fd[1]);
-	waitpid(exec.pid2, &pipex->status, 0);
+	while (wait(&pipex.status) > 0)
+		;
+	if (exec.infile != pipex.infile && exec.infile != -1)
+		close(exec.infile);
 }
 
-int	main(int argc, char *argv[], char **envp)
+void	setup_heredoc(t_pipex *pipex)
 {
-	t_pipex	pipex;
+	int fd[2];
+	char *line;
 
-	if (!envp || argc != 5)
-		return (1);
-	pipex = (t_pipex){.argc = argc, .argv = argv, .envp = envp, -1, -1, 0};
-	pipex.infile = open(argv[1], O_RDONLY, 0644);
-	if (pipex.infile == -1)
-		write(2, "The infile could not open\n", 26);
-	pipex.outfile = open(argv[4], O_WRONLY | O_TRUNC | O_CREAT, 0644);
-	if (pipex.outfile == -1)
-		write(2, "The outfile could not open\n", 27);
-	pipex_run(&pipex);
-	if (pipex.infile != -1)
-		close(pipex.infile);
-	if (pipex.outfile != -1)
-		close(pipex.outfile);
-	return (pipex.status % 255);
+	if (pipe(fd) == -1)
+		pipex_error("pipe", 2);
+	while (1)
+	{
+		write(1, "heredoc> ", 9);
+		line = get_next_line(0);
+		if (!line)
+			break ;
+		if (ft_strlen(line) == 0)
+			break ;
+		if (!ft_strncmp(line, pipex->argv[2], ft_strlen(line) - 1))
+		{
+			free(line);
+			break ;
+		}
+		write(fd[1], line, ft_strlen(line));
+		write(fd[1], "\n", 1);
+		free(line);
+	}
+	close(fd[1]);
+	*pipex = (t_pipex){pipex->argc, pipex->argv, pipex->envp, fd[0], -1, 1, 3, 0};
 }

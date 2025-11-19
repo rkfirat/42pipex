@@ -5,7 +5,7 @@ CFLAGS := -Wall -Wextra -Werror
 SRCS := pipex.c ft_strjoin.c ft_strdup.c ft_strncmp.c ft_strchr.c ft_split.c pipex_utils.c
 OBJS := $(SRCS:.c=.o)
 
-BONUS_SRCS := pipex_bonus.c exec_bonus.c heredoc_bonus.c utils.c
+BONUS_SRCS := pipex_bonus.c pipex_setup_bonus.c pipex_utils_bonus.c get_next_line.c get_next_line_utils.c ft_strjoin.c ft_strncmp.c ft_split.c ft_strchr.c ft_strdup.c
 BONUS_OBJS := $(BONUS_SRCS:.c=.o)
 
 all: $(NAME)
